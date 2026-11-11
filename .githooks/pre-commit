@@ -5,17 +5,17 @@ FILES=$(git diff --cached --name-only --diff-filter=ACMR)
 
 for file in $FILES; do
     case "$file" in
-        Saved/*[Intermediate/*|Binaries/*|DerivedDataCache/*|.vs/*)
-            echo "ERROR: Forbidden UES folder detected ($file). Commit aborted!"
+        Saved/*|Intermediate/*|Binaries/*|DerivedDataCache/*|.vs/*)
+            echo "ERROR: Forbidden UE5 folder detected ($file). Commit aborted!"
             exit 1
             ;;
-        esac
+    esac
 
     if [ -f "$file" ]; then
         size=$(wc -c < "$file" | tr -d ' ')
-        if ["$size" -gt "$MAX_SIZE" ]; then
+        if [ "$size" -gt "$MAX_SIZE" ]; then
             is_lfs=$(git check-attr filter -- "$file" | awk '{print $3}')
-            if ["$is_lfs" != "lfs" ]; then
+            if [ "$is_lfs" != "lfs" ]; then
                 echo "ERROR: File $file exceeds 50MB ($size bytes) and is not tracked by Git LFS!"
                 exit 1
             fi
